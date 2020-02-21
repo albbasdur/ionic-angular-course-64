@@ -8,13 +8,6 @@
   <!-- This page is loaded through the Angular Router (app-routing.module.ts) -->
   <!--<p>Recipes page works!</p>-->
   <ion-list>                                  <!-- Click on a recipe and opens the detail-page -->
-    <ion-item *ngFor="let recipe of recipes" [routerLink]="['./', recipe.id]">
-      <ion-avatar slot="start">
-        <ion-img [src]="recipe.imageUrl"></ion-img>
-      </ion-avatar>
-      <ion-label>
-        {{ recipe.title }}
-      </ion-label>
-    </ion-item>
+    <app-recipe-item *ngFor="let recipe of recipes" [recipeItem]="recipe"></app-recipe-item>
   </ion-list>
 </ion-content>

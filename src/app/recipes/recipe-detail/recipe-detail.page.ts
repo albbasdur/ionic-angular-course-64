@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { RecipesService } from '../recipes.service';
 import { Recipe } from '../recipes.model';
 
@@ -16,7 +17,8 @@ export class RecipeDetailPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private recipesService: RecipesService,
     // router is used when deleting a recipe, navigate to the recipe page
-    private router: Router) { }
+    private router: Router,
+    private alertCtrl: AlertController) { }
 
   ngOnInit() {
         // This OBSERVABLE will emit new data whenever our dynamic segment change,
@@ -27,6 +29,7 @@ export class RecipeDetailPage implements OnInit {
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('recipeId')) {
         // redirect
+        this.router.navigate(['/recipes']);
         return;
       }
           // This "recipeId" must match the name in app-routing.module.ts
@@ -35,9 +38,28 @@ export class RecipeDetailPage implements OnInit {
     });
   }
 
+  async presentAlertForDeletion() {
+    const alert = await this.alertCtrl.create({
+      header: 'Are you sure?',
+      message: 'Do you really want to delete the recipe?',
+      buttons: [{
+        text: 'Cancel',
+        role: 'cancel'
+      },
+      {
+        text: 'Delete',
+        handler: () => {
+          this.recipesService.deleteRecipe(this.loadedRecipe.id);
+          this.router.navigate(['/recipes']);
+        }
+      }]
+    });
+
+    await alert.present();
+  }
+
   onDeleteRecipe() {
-    this.recipesService.deleteRecipe(this.loadedRecipe.id);
-    this.router.navigate(['/recipes']);
+      this.presentAlertForDeletion();
   }
 
 }
